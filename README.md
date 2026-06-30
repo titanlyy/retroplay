@@ -6,6 +6,22 @@ A web-based Game Boy ROM player — open source, personal-use emulation platform
 
 ---
 
+## ▶️ Open in GitHub Codespaces (Zero Setup)
+
+Click the button below to launch a fully configured cloud dev environment:
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/titanlyy/retroplay)
+
+Codespaces will:
+1. Spin up a cloud container with Node.js 20
+2. Run `npm install` automatically
+3. Start the Vite dev server
+4. Open the app in your browser
+
+No local installs. No terminal. Just click and play.
+
+---
+
 ## Features
 
 - 🕹️ **Game Boy, GBC & GBA** emulation via mGBA (WebAssembly)
@@ -19,46 +35,17 @@ A web-based Game Boy ROM player — open source, personal-use emulation platform
 
 ---
 
-## Getting Started
+## Tech Stack
 
-### Prerequisites
-
-- Node.js 20+
-- npm 9+
-
-### Install & Run
-
-```bash
-git clone https://github.com/titanlyy/retroplay
-cd retroplay
-npm install
-npm run dev
-```
-
-Open [http://localhost:5173](http://localhost:5173)
-
----
-
-## WASM Core Setup (mGBA)
-
-The mGBA WebAssembly core must be compiled separately and placed in `/public/core/`.
-
-```bash
-# 1. Install Emscripten
-git clone https://github.com/emscripten-core/emsdk
-cd emsdk && ./emsdk install latest && ./emsdk activate latest
-source ./emsdk_env.sh
-
-# 2. Clone and build mGBA
-git clone https://github.com/mgba-emu/mgba
-cd mgba
-mkdir build-wasm && cd build-wasm
-emcmake cmake .. -DBUILD_SDL=OFF -DBUILD_LIBRETRO=OFF
-emmake make -j4
-
-# 3. Copy output to RetroPlay
-cp mgba.js mgba.wasm /path/to/retroplay/public/core/
-```
+| Layer | Technology |
+|---|---|
+| Emulator Core | [@thenick775/mgba-wasm](https://www.npmjs.com/package/@thenick775/mgba-wasm) |
+| Frontend | Vue 3 + Vite |
+| Styling | Tailwind CSS |
+| State | Pinia |
+| Storage | Origin Private File System (OPFS) |
+| Hosting | Cloudflare Pages |
+| CI/CD | GitHub Actions |
 
 ---
 
@@ -66,16 +53,16 @@ cp mgba.js mgba.wasm /path/to/retroplay/public/core/
 
 ```
 retroplay/
+├── .devcontainer/         # GitHub Codespaces config
 ├── public/
-│   └── core/          # mGBA WASM files (mgba.js + mgba.wasm)
+│   └── favicon.svg
 ├── src/
-│   ├── core/          # Emulator bridge, OPFS storage, input handler
-│   ├── components/    # Vue components (library, player, layout)
-│   ├── views/         # Page-level views (Library, Player, Settings, Stats)
-│   ├── stores/        # Pinia state (library, emulator, settings)
-│   └── router/        # Vue Router config
-└── .github/
-    └── workflows/     # GitHub Actions CI
+│   ├── core/              # Emulator bridge, OPFS storage, input handler
+│   ├── components/        # Vue components (library, player, layout)
+│   ├── views/             # Page-level views
+│   ├── stores/            # Pinia state
+│   └── router/            # Vue Router
+└── .github/workflows/     # GitHub Actions CI
 ```
 
 ---
@@ -83,7 +70,7 @@ retroplay/
 ## Roadmap
 
 - [x] Phase 0 — Project scaffold
-- [ ] Phase 1 — mGBA WASM core integration
+- [x] Phase 1 — mGBA WASM core (via npm package)
 - [ ] Phase 2 — ROM library & OPFS storage
 - [ ] Phase 3 — Controls (keyboard, gamepad, touch)
 - [ ] Phase 4 — Save states & auto-save

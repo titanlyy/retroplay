@@ -11,13 +11,17 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    host: true, // expose to Codespaces network
     headers: {
-      // Required for SharedArrayBuffer (needed by some WASM cores)
+      // Required for SharedArrayBuffer used by mGBA WASM threads
       'Cross-Origin-Opener-Policy': 'same-origin',
       'Cross-Origin-Embedder-Policy': 'require-corp'
     }
   },
   optimizeDeps: {
-    exclude: ['@/core/mgba'] // WASM module — don't pre-bundle
+    exclude: ['@thenick775/mgba-wasm']
+  },
+  build: {
+    target: 'esnext' // required for top-level await in WASM modules
   }
 })
