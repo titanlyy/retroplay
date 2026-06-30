@@ -1,48 +1,59 @@
 <template>
-  <div class="p-6 max-w-2xl">
-    <h1 class="text-2xl font-bold text-white mb-6">Stats</h1>
+  <div class="p-6 lg:p-8 max-w-2xl animate-fade-up">
+    <h1 class="text-2xl font-bold text-white tracking-tight mb-8">Stats</h1>
 
-    <div class="grid grid-cols-2 gap-4 mb-8">
-      <div class="card p-4">
-        <p class="text-white/40 text-xs uppercase tracking-widest mb-1">Games in Library</p>
-        <p class="text-3xl font-bold text-white">{{ library.games.length }}</p>
+    <!-- Summary cards -->
+    <div class="grid grid-cols-2 gap-3 mb-8">
+      <div class="card p-5">
+        <p class="section-label mb-2">Games</p>
+        <p class="text-4xl font-bold text-gradient">{{ library.games.length }}</p>
       </div>
-      <div class="card p-4">
-        <p class="text-white/40 text-xs uppercase tracking-widest mb-1">Consoles</p>
-        <p class="text-3xl font-bold text-white">{{ uniqueConsoles }}</p>
+      <div class="card p-5">
+        <p class="section-label mb-2">Consoles</p>
+        <p class="text-4xl font-bold text-gradient">{{ uniqueConsoles }}</p>
       </div>
     </div>
 
-    <div class="card p-4">
-      <h2 class="text-sm font-semibold text-white/40 uppercase tracking-widest mb-3">Library Breakdown</h2>
-      <div v-if="library.games.length === 0" class="text-white/30 text-sm py-4 text-center">No games yet</div>
-      <div v-else class="space-y-2">
+    <!-- Breakdown -->
+    <section>
+      <p class="section-label">Library Breakdown</p>
+      <div class="card divide-y divide-white/5">
+        <div v-if="library.games.length === 0" class="px-5 py-10 text-center text-white/25 text-sm">
+          No games in your library yet
+        </div>
         <div
-          v-for="(count, console) in consoleBreakdown"
-          :key="console"
-          class="flex items-center justify-between text-sm"
+          v-for="(count, consoleName) in consoleBreakdown"
+          :key="consoleName"
+          class="flex items-center justify-between px-5 py-3.5"
         >
-          <span class="text-white/70">{{ console }}</span>
-          <span class="text-gb-purple font-semibold">{{ count }} game{{ count !== 1 ? 's' : '' }}</span>
+          <div class="flex items-center gap-3">
+            <span class="text-xl">{{ consoleIcon(consoleName) }}</span>
+            <span class="text-sm text-white/70">{{ consoleName }}</span>
+          </div>
+          <span class="badge-violet">{{ count }} game{{ count !== 1 ? 's' : '' }}</span>
         </div>
       </div>
-    </div>
+    </section>
   </div>
 </template>
 
 <script setup>
 import { computed, onMounted } from 'vue'
 import { useLibraryStore } from '@/stores/libraryStore'
+
 const library = useLibraryStore()
 onMounted(() => library.loadFromStorage())
 
-const consoleBreakdown = computed(() => {
-  return library.games.reduce((acc, g) => {
+const consoleBreakdown = computed(() =>
+  library.games.reduce((acc, g) => {
     const c = g.console ?? 'Unknown'
     acc[c] = (acc[c] ?? 0) + 1
     return acc
   }, {})
-})
-
+)
 const uniqueConsoles = computed(() => Object.keys(consoleBreakdown.value).length)
+
+function consoleIcon(name) {
+  return { GB: '🌟', GBC: '🌈', GBA: '🎮', NES: '🕹️', SNES: '🕹️' }[name] ?? '🎮'
+}
 </script>

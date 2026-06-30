@@ -2,44 +2,114 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Press+Start+2P&display=swap');
+
 @layer base {
-  * {
-    box-sizing: border-box;
-  }
+  *, *::before, *::after { box-sizing: border-box; }
 
-  html {
-    font-family: 'Inter', sans-serif;
-  }
+  html { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
 
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
+  body { background: #0a0a0f; color: #f0f0f5; }
 
-  ::-webkit-scrollbar-track {
-    background: #0f0f1a;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: #8b7fd4;
-    border-radius: 3px;
-  }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #3d3a5c; border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: #6c63ff; }
 }
 
 @layer components {
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-medium rounded-xl
+           transition-all duration-200 cursor-pointer select-none whitespace-nowrap;
+  }
   .btn-primary {
-    @apply bg-gb-purple hover:bg-opacity-80 text-white font-semibold px-4 py-2 rounded-lg transition-all duration-200;
+    @apply btn bg-violet-600 hover:bg-violet-500 active:scale-95
+           text-white px-4 py-2.5 text-sm shadow-lg shadow-violet-900/40;
   }
-
+  .btn-secondary {
+    @apply btn bg-white/8 hover:bg-white/12 active:scale-95
+           text-white/80 hover:text-white px-4 py-2.5 text-sm border border-white/6;
+  }
   .btn-ghost {
-    @apply bg-transparent hover:bg-white/10 text-white/70 hover:text-white px-4 py-2 rounded-lg transition-all duration-200;
+    @apply btn bg-transparent hover:bg-white/6 active:scale-95
+           text-white/50 hover:text-white/80 px-3 py-2 text-sm;
+  }
+  .btn-icon {
+    @apply btn w-9 h-9 bg-white/6 hover:bg-white/12 active:scale-90
+           text-white/60 hover:text-white rounded-lg;
   }
 
+  /* Cards */
   .card {
-    @apply bg-gb-dark rounded-xl border border-white/5 overflow-hidden;
+    @apply bg-white/4 rounded-2xl border border-white/6 overflow-hidden
+           backdrop-blur-sm;
+  }
+  .card-hover {
+    @apply card hover:bg-white/7 hover:border-violet-500/30
+           hover:shadow-xl hover:shadow-violet-950/40
+           transition-all duration-200 cursor-pointer;
   }
 
+  /* Inputs */
+  .input {
+    @apply w-full bg-white/6 border border-white/8 rounded-xl px-4 py-2.5
+           text-sm text-white placeholder-white/25 outline-none
+           focus:border-violet-500/60 focus:bg-white/8 transition-all duration-200;
+  }
+  .select {
+    @apply input appearance-none cursor-pointer;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full;
+  }
+  .badge-violet { @apply badge bg-violet-500/15 text-violet-300 border border-violet-500/20; }
+  .badge-green  { @apply badge bg-emerald-500/15 text-emerald-300 border border-emerald-500/20; }
+  .badge-amber  { @apply badge bg-amber-500/15 text-amber-300 border border-amber-500/20; }
+
+  /* Game canvas pixel-perfect rendering */
   .game-screen {
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    display: block;
   }
+
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent;
+  }
+
+  /* Section headings */
+  .section-label {
+    @apply text-xs font-semibold uppercase tracking-widest text-white/30 mb-3;
+  }
+
+  /* Divider */
+  .divider { @apply border-t border-white/6 my-4; }
 }
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0); }
+  50%       { box-shadow: 0 0 24px 4px rgba(124, 58, 237, 0.3); }
+}
+
+.animate-fade-up  { animation: fadeUp  0.3s ease both; }
+.animate-fade-in  { animation: fadeIn  0.2s ease both; }
+.animate-pulse-glow { animation: pulse-glow 2.5s ease infinite; }
+
+/* Stagger delays for grid items */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.10s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.20s; }

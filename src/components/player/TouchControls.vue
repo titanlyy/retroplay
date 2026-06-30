@@ -1,52 +1,63 @@
 <template>
-  <div class="touch-controls fixed bottom-0 left-0 right-0 pb-6 px-4 flex justify-between items-end pointer-events-none">
+  <div class="fixed bottom-0 left-0 right-0 pointer-events-none select-none pb-safe px-6 py-5 flex justify-between items-end">
     <!-- D-Pad -->
-    <div class="relative w-32 h-32 pointer-events-auto">
-      <button class="dpad-btn top-0 left-1/2 -translate-x-1/2" @touchstart.prevent="press('up')" @touchend.prevent="release('up')">▲</button>
-      <button class="dpad-btn bottom-0 left-1/2 -translate-x-1/2" @touchstart.prevent="press('down')" @touchend.prevent="release('down')">▼</button>
-      <button class="dpad-btn left-0 top-1/2 -translate-y-1/2" @touchstart.prevent="press('left')" @touchend.prevent="release('left')">◀</button>
-      <button class="dpad-btn right-0 top-1/2 -translate-y-1/2" @touchstart.prevent="press('right')" @touchend.prevent="release('right')">▶</button>
-      <div class="absolute inset-1/3 bg-white/10 rounded"></div>
+    <div class="pointer-events-auto relative w-36 h-36">
+      <!-- Cross shape background -->
+      <div class="absolute inset-x-[33%] inset-y-0 bg-white/8 rounded-xl" />
+      <div class="absolute inset-y-[33%] inset-x-0 bg-white/8 rounded-xl" />
+      <!-- Buttons -->
+      <button v-for="d in dpad" :key="d.dir"
+        class="absolute w-11 h-11 flex items-center justify-center text-white/60 active:text-white active:bg-white/20 rounded-xl transition-all text-sm font-bold"
+        :style="d.style"
+        @touchstart.prevent="$emit('press', d.dir)"
+        @touchend.prevent="$emit('release', d.dir)"
+      >{{ d.icon }}</button>
+      <div class="absolute inset-[35%] rounded-lg bg-white/5" />
     </div>
 
-    <!-- Center Buttons -->
-    <div class="flex flex-col items-center gap-2 pointer-events-auto mb-4">
-      <div class="flex gap-3">
-        <button class="meta-btn" @touchstart.prevent="press('select')" @touchend.prevent="release('select')">SELECT</button>
-        <button class="meta-btn" @touchstart.prevent="press('start')" @touchend.prevent="release('start')">START</button>
+    <!-- System buttons -->
+    <div class="pointer-events-auto flex flex-col items-center gap-2 mb-3">
+      <div class="flex gap-2">
+        <button
+          v-for="sys in sysButtons" :key="sys.label"
+          class="bg-white/10 active:bg-white/20 text-white/50 active:text-white text-[10px] font-semibold px-3.5 py-1.5 rounded-full border border-white/8 transition-all"
+          @touchstart.prevent="$emit('press', sys.key)"
+          @touchend.prevent="$emit('release', sys.key)"
+        >{{ sys.label }}</button>
       </div>
     </div>
 
-    <!-- A / B Buttons -->
-    <div class="relative w-32 h-32 pointer-events-auto">
+    <!-- A / B -->
+    <div class="pointer-events-auto relative w-36 h-36">
       <button
-        class="action-btn bg-red-500/80 right-0 top-1/2 -translate-y-1/2"
-        @touchstart.prevent="press('a')"
-        @touchend.prevent="release('a')"
+        class="absolute right-1 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full
+               bg-red-500/70 active:bg-red-400 border-2 border-red-400/30
+               text-white font-bold text-base shadow-lg active:scale-95 transition-all"
+        @touchstart.prevent="$emit('press', 'a')"
+        @touchend.prevent="$emit('release', 'a')"
       >A</button>
       <button
-        class="action-btn bg-yellow-500/80 left-0 bottom-2"
-        @touchstart.prevent="press('b')"
-        @touchend.prevent="release('b')"
+        class="absolute left-1 bottom-1 w-12 h-12 rounded-full
+               bg-yellow-500/70 active:bg-yellow-400 border-2 border-yellow-400/30
+               text-white font-bold text-sm shadow-lg active:scale-95 transition-all"
+        @touchstart.prevent="$emit('press', 'b')"
+        @touchend.prevent="$emit('release', 'b')"
       >B</button>
     </div>
   </div>
 </template>
 
 <script setup>
-const emit = defineEmits(['press', 'release'])
-function press(btn) { emit('press', btn) }
-function release(btn) { emit('release', btn) }
-</script>
+defineEmits(['press', 'release'])
 
-<style scoped>
-.dpad-btn {
-  @apply absolute w-10 h-10 bg-white/20 active:bg-white/40 rounded text-white text-sm flex items-center justify-center;
-}
-.action-btn {
-  @apply absolute w-12 h-12 rounded-full text-white font-bold text-sm flex items-center justify-center active:scale-95 transition-transform;
-}
-.meta-btn {
-  @apply bg-white/20 active:bg-white/40 text-white text-xs px-3 py-1.5 rounded-full;
-}
-</style>
+const dpad = [
+  { dir: 'up',    icon: '▲', style: 'top:0; left:50%; transform:translateX(-50%)' },
+  { dir: 'down',  icon: '▼', style: 'bottom:0; left:50%; transform:translateX(-50%)' },
+  { dir: 'left',  icon: '◀', style: 'left:0; top:50%; transform:translateY(-50%)' },
+  { dir: 'right', icon: '▶', style: 'right:0; top:50%; transform:translateY(-50%)' },
+]
+const sysButtons = [
+  { label: 'SELECT', key: 'select' },
+  { label: 'START',  key: 'start' },
+]
+</script>

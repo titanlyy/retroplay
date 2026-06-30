@@ -1,45 +1,70 @@
 <template>
-  <div class="p-6">
+  <div class="p-6 lg:p-8 max-w-screen-xl mx-auto">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center justify-between mb-8">
       <div>
-        <h1 class="text-2xl font-bold text-white">Library</h1>
-        <p class="text-white/40 text-sm mt-0.5">{{ store.games.length }} game{{ store.games.length !== 1 ? 's' : '' }}</p>
+        <h1 class="text-2xl font-bold text-white tracking-tight">Library</h1>
+        <p class="text-white/35 text-sm mt-0.5">
+          {{ store.games.length === 0 ? 'No games yet' : `${store.games.length} game${store.games.length !== 1 ? 's' : ''}` }}
+        </p>
       </div>
-      <button class="btn-primary" @click="showUploader = true">+ Add Game</button>
+      <button class="btn-primary" @click="showUploader = true">
+        <span>+</span> Add Game
+      </button>
     </div>
 
     <!-- Upload Modal -->
-    <div
-      v-if="showUploader"
-      class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-      @click.self="showUploader = false"
-    >
-      <div class="card w-full max-w-md p-6">
-        <h2 class="text-lg font-semibold mb-4">Add Game</h2>
-        <RomUploader @rom-loaded="onRomLoaded" />
-      </div>
-    </div>
+    <Teleport to="body">
+      <Transition name="modal">
+        <div
+          v-if="showUploader"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md"
+          @click.self="showUploader = false"
+        >
+          <div class="card w-full max-w-md p-6 animate-fade-up shadow-2xl shadow-black/50">
+            <div class="flex items-center justify-between mb-5">
+              <h2 class="text-base font-semibold">Add Game</h2>
+              <button class="btn-icon" @click="showUploader = false">✕</button>
+            </div>
+            <RomUploader @rom-loaded="onRomLoaded" />
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
 
     <!-- Empty State -->
-    <div v-if="store.games.length === 0" class="flex flex-col items-center justify-center py-24 text-center">
-      <div class="text-6xl mb-4">🎮</div>
-      <h2 class="text-xl font-semibold text-white/60">No games yet</h2>
-      <p class="text-white/30 text-sm mt-2 max-w-xs">Add a ROM file to get started. Your games are stored locally in your browser.</p>
-      <button class="btn-primary mt-6" @click="showUploader = true">Add Your First Game</button>
-    </div>
+    <Transition name="fade">
+      <div
+        v-if="store.games.length === 0"
+        class="flex flex-col items-center justify-center py-32 text-center animate-fade-up"
+      >
+        <div class="w-24 h-24 rounded-3xl bg-white/4 border border-white/6 flex items-center justify-center text-5xl mb-5 shadow-inner">
+          🎮
+        </div>
+        <h2 class="text-lg font-semibold text-white/60 mb-2">Your library is empty</h2>
+        <p class="text-white/25 text-sm max-w-xs leading-relaxed">
+          Upload your ROM files to get started. Games are stored locally in your browser.
+        </p>
+        <button class="btn-primary mt-6" @click="showUploader = true">
+          Add Your First Game
+        </button>
+      </div>
+    </Transition>
 
     <!-- Game Grid -->
     <div
-      v-else
-      class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+      v-if="store.games.length > 0"
+      class="grid gap-3"
+      style="grid-template-columns: repeat(auto-fill, minmax(140px, 1fr))"
     >
-      <GameCard
-        v-for="game in store.games"
+      <div
+        v-for="(game, i) in store.games"
         :key="game.id"
-        :game="game"
-        @play="launchGame"
-      />
+        class="animate-fade-up"
+        :class="`stagger-${Math.min(i + 1, 4)}`"
+      >
+        <GameCard :game="game" @play="launchGame" />
+      </div>
     </div>
   </div>
 </template>
@@ -78,3 +103,9 @@ function launchGame(game) {
   router.push(`/play/${game.id}`)
 }
 </script>
+
+<style scoped>
+.modal-enter-active { transition: opacity 0.2s ease; }
+.modal-leave-active { transition: opacity 0.15s ease; }
+.modal-enter-from, .modal-leave-to { opacity: 0; }
+</style>

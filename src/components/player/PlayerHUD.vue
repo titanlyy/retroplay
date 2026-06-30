@@ -1,17 +1,11 @@
 <template>
-  <div
-    class="absolute inset-0 bg-black/0 hover:bg-black/40 transition-all duration-200 group"
-  >
-    <!-- Top Bar -->
-    <div
-      class="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-    >
-      <span class="text-white text-xs font-medium bg-black/50 px-2 py-1 rounded">RetroPlay</span>
-
-      <div class="flex items-center gap-1">
-        <!-- Speed Selector -->
+  <div class="absolute inset-0 flex flex-col justify-between p-3 bg-gradient-to-b from-black/50 via-transparent to-black/60">
+    <!-- Top row -->
+    <div class="flex items-center justify-between">
+      <span class="badge-violet text-[10px]">RetroPlay</span>
+      <div class="flex items-center gap-1.5">
         <select
-          class="bg-black/60 text-white text-xs rounded px-2 py-1 border-none outline-none"
+          class="bg-black/60 backdrop-blur text-white text-xs rounded-lg px-2 py-1.5 border border-white/10 outline-none cursor-pointer"
           @change="(e) => $emit('set-speed', Number(e.target.value))"
         >
           <option value="1">1×</option>
@@ -22,24 +16,31 @@
       </div>
     </div>
 
-    <!-- Bottom Bar -->
-    <div
-      class="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-2 px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-    >
-      <button class="hud-btn" title="Save State" @click="$emit('save')">💾</button>
-      <button class="hud-btn" title="Load State" @click="$emit('load')">📂</button>
-      <button class="hud-btn" title="Screenshot" @click="$emit('screenshot')">📷</button>
-      <button class="hud-btn" title="Pause/Resume" @click="$emit('toggle-pause')">⏸</button>
+    <!-- Bottom row -->
+    <div class="flex items-center justify-center gap-2">
+      <button
+        v-for="btn in hudButtons"
+        :key="btn.label"
+        class="w-9 h-9 rounded-xl bg-black/60 backdrop-blur border border-white/10
+               hover:bg-violet-600/80 hover:border-violet-400/50
+               text-base flex items-center justify-center
+               transition-all duration-150 active:scale-90"
+        :title="btn.label"
+        @click="$emit(btn.event)"
+      >
+        {{ btn.icon }}
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
-defineEmits(['save', 'load', 'screenshot', 'toggle-pause', 'set-speed'])
-</script>
+defineEmits(['save', 'load', 'screenshot', 'toggle-pause'])
 
-<style scoped>
-.hud-btn {
-  @apply text-lg bg-black/60 hover:bg-gb-purple/60 rounded-lg p-2 transition-colors duration-150 cursor-pointer;
-}
-</style>
+const hudButtons = [
+  { icon: '💾', label: 'Save State',    event: 'save' },
+  { icon: '📂', label: 'Load State',    event: 'load' },
+  { icon: '📷', label: 'Screenshot',   event: 'screenshot' },
+  { icon: '⏸️',  label: 'Pause/Resume', event: 'toggle-pause' },
+]
+</script>
